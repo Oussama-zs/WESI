@@ -39,7 +39,7 @@
         <a class="aboutme" href="#">About US</a>
         <p id="aboutme" >
             Oussama EL ATTAOUI<br>
-            <a target="_blank" href="https://www.Linkedin.com/in/oussama-el-attaoui-072a12335">LinkedIn</a><br>
+            <a target="_blank" href="https://www.Linkedin.com/in/oussama-el-attaoui-072a12335"><i class="fa-brands fa-linkedin-in"></i></a><br>
             Cyber Security & Software Engineering Enthusiast<br>
             +212617256346<br>
             oelattaoui1@gmail.com<br>
@@ -429,59 +429,130 @@
             <p>Check the Internship section for opportunities, requirements, and recommendations on finding an internship.</p>
         </div>
     </div>
-    <footer>
-        <p>&copy; 2025 WESI | By Oussama EL ATTAOUI </p>
+   
+    <footer id="CONTACT"
+    <p>&copy; 2025 WESI | By Oussama EL ATTAOUI <a href="https://github.com/Oussama-zs"><i class="fa-brands fa-square-github"></i></a> <a href="mailto:oelattaoui@gmail.com"><i class="fa-solid fa-envelope"></i></a></p>
     </footer>
+    <div id="wesi-chatbot" style="position:fixed; bottom:20px; right:20px; z-index:1000;">
+        <div id="chatbot-container" style="display:none; width:300px; height:400px; background:#292a2b; border-radius:10px; box-shadow:0 0 10px #00bcd4; overflow:hidden;">
+            <div style="background:#00bcd4; color:white; padding:10px; font-weight:bold; display:flex; justify-content:space-between;">
+                <span>WESI Assistant</span>
+                <button id="close-chat" style="background:none; border:none; color:white; cursor:pointer;">✕</button>
+            </div>
+            <div id="chat-messages" style="height:300px; overflow-y:auto; padding:10px; color:white;"></div>
+            <div style="padding:10px; border-top:1px solid #444;">
+                <input id="user-input" type="text" placeholder="Ask me something..." style="width:70%; padding:8px; background:#1e1e1e; border:1px solid #444; color:white;">
+                <button id="send-btn" style="width:25%; padding:8px; background:#00bcd4; border:none; color:white; cursor:pointer;">Send</button>
+            </div>
+        </div>
+        <button id="chatbot-toggle" style="background:#00bcd4; color:white; border:none; border-radius:50%; width:60px; height:60px; font-size:24px; cursor:pointer; box-shadow:0 0 10px #00bcd4;">💬</button>
+    </div>
     </main>
-    
-    
+    <script src="script.js"></script>
     <script>
-        function searchFunction() {
-            const input = document.getElementById("search-text").value.toLowerCase().trim();
-            const sections = document.querySelectorAll(".slider");
-            let found = false;
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleBtn = document.getElementById('chatbot-toggle');
+        const closeBtn = document.getElementById('close-chat');
+        const container = document.getElementById('chatbot-container');
+        const messagesDiv = document.getElementById('chat-messages');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
 
-            sections.forEach(section => {
-                const text = section.textContent.toLowerCase();
-                if (text.includes(input) && input) {
-                    section.style.display = "block"; // Show the section
-                    section.scrollIntoView({ behavior: "smooth", block: "start" }); // Scroll to the section
-                    found = true;
-                } else {
-                    section.style.display = "none"; // Hide the section
+        // Predefined responses
+        const responses = {
+            "hello": "Hello! How can I help you with WESI today?",
+            "programs": "ESI offers 4 programs: ICSD (Data Science), IIN (Digital Information), ISITD (Digital Transformation), and ISSIC (Cybersecurity).",
+            "clubs": "Student clubs include CODE-ESI (IT), JCMP-ESI (Personal Development), ESI TV (Media), and JLM ESI (Leadership).",
+            "docs": "Course documents are organized by semester in the DOCS section. You'll find links to Google Drive folders.",
+            "resources": "Check the Resources section for learning platforms like FreeCodeCamp, TryHackMe, and Kaggle.",
+            "default": "I'm WESI Assistant. You can ask me about: programs, clubs, docs, or resources."
+        };
+
+        // Add message to chat
+        function addMessage(sender, message) {
+            const messageElement = document.createElement('div');
+            messageElement.style.margin = '5px';
+            messageElement.style.padding = '8px';
+            messageElement.style.borderRadius = '5px';
+            messageElement.style.backgroundColor = sender === 'user' ? '#00bcd4' : '#1e1e1e';
+            messageElement.style.color = 'white';
+            messageElement.style.maxWidth = '80%';
+            messageElement.style.marginLeft = sender === 'user' ? 'auto' : '0';
+            messageElement.textContent = message;
+            messagesDiv.appendChild(messageElement);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // Handle user input
+        function handleUserInput() {
+            const input = userInput.value.toLowerCase().trim();
+            userInput.value = '';
+
+            if (!input) return;
+
+            addMessage('user', input);
+
+            setTimeout(() => {
+                let response = responses.default;
+                for (const [keyword, reply] of Object.entries(responses)) {
+                    if (input.includes(keyword)) {
+                        response = reply;
+                        break;
+                    }
                 }
-            });
+                addMessage('bot', response);
+            }, 500);
+        }
 
-            if (!input) {
-                sections.forEach(section => section.style.display = "block"); // Reset all sections if input is empty
+        // Toggle chatbot visibility
+        toggleBtn.addEventListener('click', function () {
+            container.style.display = container.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Close chatbot
+        closeBtn.addEventListener('click', function () {
+            container.style.display = 'none';
+        });
+
+        // Send button and Enter key functionality
+        sendBtn.addEventListener('click', handleUserInput);
+        userInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') handleUserInput();
+        });
+
+        // Initial greeting
+        setTimeout(() => {
+            addMessage('bot', "Hi! I'm WESI Assistant. Ask me about programs, clubs, docs, or resources.");
+        }, 1000);
+
+        // Forum post functionality
+        function postMessage() {
+            const postContent = document.getElementById("postContent").value.trim();
+            if (postContent !== "") {
+                const forumPosts = document.getElementById("forumPosts");
+                const newPost = document.createElement("div");
+                newPost.className = "post";
+                newPost.innerHTML = `<p>${postContent}</p>`;
+                forumPosts.insertBefore(newPost, forumPosts.firstChild); // Add post at the top
+                const currentPosts = forumPosts.innerHTML;
+                localStorage.setItem("forumData", currentPosts); // Save updated posts to localStorage
+                document.getElementById("postContent").value = ""; // Clear input field
             }
+        }
 
-            if (!found && input) {
-                alert("No matching results found. Please refine your search.");
+        // Load saved forum posts on page load
+        window.onload = function () {
+            const savedPosts = localStorage.getItem("forumData");
+            if (savedPosts) {
+                document.getElementById("forumPosts").innerHTML = savedPosts; // Load saved posts
             }
-        }
+        };
 
-    function postMessage() {
-        const postContent = document.getElementById("postContent").value.trim();
-        if (postContent !== "") {
-            const forumPosts = document.getElementById("forumPosts");
-            const newPost = document.createElement("div");
-            newPost.className = "post";
-            newPost.innerHTML = `<p>${postContent}</p>`;
-            forumPosts.insertBefore(newPost, forumPosts.firstChild); // Add post at the top
-            const currentPosts = forumPosts.innerHTML;
-            localStorage.setItem("forumData", currentPosts); // Save updated posts to localStorage
-            document.getElementById("postContent").value = ""; // Clear input field
-        }
-    }
-
-    window.onload = function () {
-        const savedPosts = localStorage.getItem("forumData");
-        if (savedPosts) {
-            document.getElementById("forumPosts").innerHTML = savedPosts; // Load saved posts
-        }
-    };
-    </script>
-    
+        // Attach postMessage function to the post button
+        document.getElementById("post").addEventListener("click", postMessage);
+    });
+</script>
 </body>
+
+
 </html>
