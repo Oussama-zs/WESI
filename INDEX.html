@@ -112,61 +112,7 @@
          
     </div>
 
-    <div id="CLUBS" class="slider">
-        <div class="figcap2">
-            <h2 class="title">Clubs</h2>
-            <p class="description">Discover the student clubs that shape campus life, foster creativity, and build a strong community at ESI.</p>
-        </div>    
-        
-        
-        <div class="clubs-container">
-                
-                
-                
-            <div class="club" id="code">
-                <i class="fa-solid fa-code"></i><br>
-                <h3>Club CODE-ESI</h3>
-                <p>CODE is the IT club of the School of Information Sciences.
-                    The main mission of the CODE club is to create a better atmosphere at the school and enable students to exchange ideas, create contacts with the professional world and also organise events and training courses to share their knowledge.</p>
-                
-            </div>
-            
-            
-            
-            
-            
-            <div class="club" id="jcmp">
-                <i class="fa-solid fa-seedling"></i><br>
-                <h3>Club JCMP-ESI</h3>
-                <p>The JCMP-ESI’s mission is personal development and the fulfilment of extracurricular activities.</p>
-                
-            </div>
-            
-            
 
-            
-            
-            
-            <div class="club"  id="esitv">
-                <i class="fa-solid fa-microphone"></i><br>
-                <h3>Club ESI TV</h3>
-                <p>ESI TV highlights the events, projects and successes that make the student community proud. Its main objective is to capture, produce and share the most exciting and significant moments in student life at the School of Information Sciences, whether through captivating podcasts, hard-hitting interviews or detailed reports.</p>
-                
-            </div>
-            
-            
-            
-            
-            
-            
-            <div class="club"  id="jlm">
-                <i class="fa-solid fa-users-rays"></i><br>
-                <h3>Club JLM ESI</h3>
-                <P>JLM focuses on leadership development among Moroccan youth. The club organizes various activities, including social events and community service initiatives, to foster leadership skills and community engagement among students.</P>
-                
-            </div>
-        </div>
-    </div>
 
     <div id="DOCS" class="slider">
         <div class="figcap2">
@@ -388,6 +334,62 @@
         </div>    
     </div>
 
+        <div id="CLUBS" class="slider">
+        <div class="figcap2">
+            <h2 class="title">Clubs</h2>
+            <p class="description">Discover the student clubs that shape campus life, foster creativity, and build a strong community at ESI.</p>
+        </div>    
+        
+        <div class="clubs-container">
+                
+                
+                
+            <div class="club" id="code">
+                <i class="fa-solid fa-code"></i><br>
+                <h3>Club CODE-ESI</h3>
+                <p>CODE is the IT club of the School of Information Sciences.
+                    The main mission of the CODE club is to create a better atmosphere at the school and enable students to exchange ideas, create contacts with the professional world and also organise events and training courses to share their knowledge.</p>
+                
+            </div>
+            
+            
+            
+            
+            
+            <div class="club" id="jcmp">
+                <i class="fa-solid fa-seedling"></i><br>
+                <h3>Club JCMP-ESI</h3>
+                <p>The JCMP-ESI’s mission is personal development and the fulfilment of extracurricular activities.</p>
+                
+            </div>
+            
+            
+
+            
+            
+            
+            <div class="club"  id="esitv">
+                <i class="fa-solid fa-microphone"></i><br>
+                <h3>Club ESI TV</h3>
+                <p>ESI TV highlights the events, projects and successes that make the student community proud. Its main objective is to capture, produce and share the most exciting and significant moments in student life at the School of Information Sciences, whether through captivating podcasts, hard-hitting interviews or detailed reports.</p>
+                
+            </div>
+            
+            
+            
+            
+            
+            
+            <div class="club"  id="jlm">
+                <i class="fa-solid fa-users-rays"></i><br>
+                <h3>Club JLM ESI</h3>
+                <P>JLM focuses on leadership development among Moroccan youth. The club organizes various activities, including social events and community service initiatives, to foster leadership skills and community engagement among students.</P>
+                
+            </div>
+        </div>
+    </div>
+        
+
     <div id="FORUM" class="slider">
         <div class="figcap2">
             <h2 class="title">WESI Forum</h2>
@@ -398,6 +400,7 @@
                 <div class="forum-creat">
                     <textarea id="postContent" placeholder="Write something..."></textarea>
                     <button id="post" onclick="postMessage()">Post</button>
+                    <button id="clearPosts" onclick="clearAllPosts()">Clear All Posts</button>
                 </div>
             
                 <div id="forumPosts"></div>
@@ -458,18 +461,10 @@
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
 
-        // Predefined responses
-        const responses = {
-            "hello": "Hello! How can I help you with WESI today?",
-            "programs": "ESI offers 4 programs: ICSD (Data Science), IIN (Digital Information), ISITD (Digital Transformation), and ISSIC (Cybersecurity).",
-            "clubs": "Student clubs include CODE-ESI (IT), JCMP-ESI (Personal Development), ESI TV (Media), and JLM ESI (Leadership).",
-            "docs": "Course documents are organized by semester in the DOCS section. You'll find links to Google Drive folders.",
-            "resources": "Check the Resources section for learning platforms like FreeCodeCamp, TryHackMe, and Kaggle.",
-            "default": "I'm WESI Assistant. You can ask me about: programs, clubs, docs, or resources."
-        };
+        const API_KEY = "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";
 
         // Add message to chat
-        function addMessage(sender, message) {
+        function addMessage(sender, message, isHTML = false) {
             const messageElement = document.createElement('div');
             messageElement.style.margin = '5px';
             messageElement.style.padding = '8px';
@@ -478,30 +473,103 @@
             messageElement.style.color = 'white';
             messageElement.style.maxWidth = '80%';
             messageElement.style.marginLeft = sender === 'user' ? 'auto' : '0';
-            messageElement.textContent = message;
+            if (isHTML) {
+                messageElement.innerHTML = message;
+            } else {
+                messageElement.textContent = message;
+            }
             messagesDiv.appendChild(messageElement);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
 
+        // Show loading indicator
+        function showLoadingIndicator() {
+            const loadingElement = document.createElement('div');
+            loadingElement.id = 'loading-indicator';
+            loadingElement.style.margin = '5px';
+            loadingElement.style.padding = '8px';
+            loadingElement.style.borderRadius = '5px';
+            loadingElement.style.backgroundColor = '#1e1e1e';
+            loadingElement.style.color = 'white';
+            loadingElement.style.maxWidth = '80%';
+            loadingElement.style.marginLeft = '0';
+            loadingElement.style.display = 'flex';
+            loadingElement.style.alignItems = 'center';
+            loadingElement.innerHTML = `
+                <span style="color: #00bcd4; font-size: 20px; font-weight: bold; margin-right: 10px;">WESI</span>
+                <span>Working...</span>
+            `;
+            messagesDiv.appendChild(loadingElement);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // Remove loading indicator
+        function removeLoadingIndicator() {
+            const loadingElement = document.getElementById('loading-indicator');
+            if (loadingElement) {
+                loadingElement.remove();
+            }
+        }
+
+        // Fetch response from OpenRouter API
+        async function fetchChatbotResponse(userMessage) {
+            showLoadingIndicator();
+            try {
+                const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${API_KEY}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "model": "deepseek/deepseek-chat-v3-0324:free",
+                        "messages": [
+                            {
+                                "role": "user",
+                                "content": userMessage
+                            }
+                        ]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch response.");
+                }
+
+                const data = await response.json();
+                const botMessage = data.choices[0]?.message?.content || "Sorry, I couldn't process your request.";
+                const isGeneralQuestion = !botMessage.includes("WESI"); // Example condition to detect general questions
+
+                // Format the response for better presentation
+                const formattedMessage = botMessage.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+                // Scale chatbot window for general questions
+                if (isGeneralQuestion) {
+                    container.classList.add('scaled');
+                    setTimeout(() => {
+                        container.classList.remove('scaled');
+                    }, 3000); // Reset after 3 seconds
+                }
+
+                addMessage('bot', formattedMessage, true);
+            } catch (error) {
+                console.error(error);
+                addMessage('bot', "An error occurred while connecting to the chatbot service.");
+            } finally {
+                removeLoadingIndicator();
+            }
+        }
+
         // Handle user input
         function handleUserInput() {
-            const input = userInput.value.toLowerCase().trim();
-            userInput.value = '';
-
+            const input = userInput.value.trim();
             if (!input) return;
 
             addMessage('user', input);
+            userInput.value = '';
 
-            setTimeout(() => {
-                let response = responses.default;
-                for (const [keyword, reply] of Object.entries(responses)) {
-                    if (input.includes(keyword)) {
-                        response = reply;
-                        break;
-                    }
-                }
-                addMessage('bot', response);
-            }, 500);
+            // Fetch response from OpenRouter API
+            fetchChatbotResponse(input);
         }
 
         // Toggle chatbot visibility
@@ -522,7 +590,7 @@
 
         // Initial greeting
         setTimeout(() => {
-            addMessage('bot', "Hi! I'm WESI Assistant. Ask me about programs, clubs, docs, or resources.");
+            addMessage('bot', "Hi! I'm WESI Assistant. Ask me anything!");
         }, 1000);
 
         // Forum post functionality
@@ -532,11 +600,27 @@
                 const forumPosts = document.getElementById("forumPosts");
                 const newPost = document.createElement("div");
                 newPost.className = "post";
-                newPost.innerHTML = `<p>${postContent}</p>`;
+                newPost.innerHTML = `<p>${postContent}</p>
+                <button class="reply-btn"><i class="fa-solid fa-reply"></i> Reply</button>
+                <div class="replies"></div>`;
                 forumPosts.insertBefore(newPost, forumPosts.firstChild); // Add post at the top
                 const currentPosts = forumPosts.innerHTML;
                 localStorage.setItem("forumData", currentPosts); // Save updated posts to localStorage
                 document.getElementById("postContent").value = ""; // Clear input field
+            }
+        }
+
+        // Reply functionality
+        function addReply(event) {
+            const replyContent = prompt("Enter your reply:");
+            if (replyContent && replyContent.trim() !== "") {
+                const repliesContainer = event.target.nextElementSibling;
+                const newReply = document.createElement("div");
+                newReply.className = "reply";
+                newReply.innerHTML = `<p>${replyContent}</p>`;
+                repliesContainer.appendChild(newReply); // Add reply to the replies container
+                const currentPosts = document.getElementById("forumPosts").innerHTML;
+                localStorage.setItem("forumData", currentPosts); // Save updated posts to localStorage
             }
         }
 
@@ -545,11 +629,33 @@
             const savedPosts = localStorage.getItem("forumData");
             if (savedPosts) {
                 document.getElementById("forumPosts").innerHTML = savedPosts; // Load saved posts
+                // Reattach reply event listeners
+                document.querySelectorAll(".reply-btn").forEach(btn => {
+                    btn.addEventListener("click", addReply);
+                });
             }
         };
 
         // Attach postMessage function to the post button
         document.getElementById("post").addEventListener("click", postMessage);
+
+        // Attach reply functionality to dynamically created posts
+        document.getElementById("forumPosts").addEventListener("click", function (event) {
+            if (event.target.classList.contains("reply-btn") || event.target.closest(".reply-btn")) {
+                addReply(event);
+            }
+        });
+
+        // Clear all posts functionality
+        function clearAllPosts() {
+            if (confirm("Are you sure you want to delete all posts?")) {
+                document.getElementById("forumPosts").innerHTML = ""; // Clear the posts container
+                localStorage.removeItem("forumData"); // Remove posts from localStorage
+            }
+        }
+
+        // Attach clearAllPosts function to the button
+        document.getElementById("clearPosts").addEventListener("click", clearAllPosts);
     });
 </script>
 </body>
